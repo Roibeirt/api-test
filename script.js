@@ -2,30 +2,30 @@ const gifImageContainer = document.getElementById("gif-image");
 const gifSearchInput = document.getElementById("gif-search");
 const gifSearchButton = document.getElementById("gif-search-button");
 
-gifSearchButton.addEventListener("click", () => {displayGif()});
+gifSearchButton.addEventListener("click", () => {
+  displayGif();
+});
 
-const displayGif = () => {
+const displayGif = async () => {
+  // prevent additional calls until resolved
+  gifSearchButton.disabled = true;
 
-    let gifSearchString = gifSearchInput.value;
-    // console.log(gifSearchString);
+  const apiResponse = await giphyTranslateApiCall(gifSearchInput.value);
+  gifImageContainer.src = apiResponse.data.images.original.url;
 
-    // need to figure out async before this will work I think
-    // gifImageContainer.src = giphyApiCall(gifSearchString);
+  gifSearchButton.disabled = false;
+};
 
-    giphyApiCall(gifSearchString);
-    
-}
-
-const giphyApiCall = (searchString) => {
-
-    fetch("https://api.giphy.com/v1/gifs/translate?api_key=K0O1K5iGkaJcwATT0QCbHkQX1A6mJwvc&s="+searchString, {mode: "cors"})
-    .then(function(response) {
-      return(response.json());
+const giphyTranslateApiCall = async (searchString) => {
+  return await fetch(
+    "https://api.giphy.com/v1/gifs/translate?api_key=K0O1K5iGkaJcwATT0QCbHkQX1A6mJwvc&s=" +
+      searchString,
+    { mode: "cors" }
+  )
+    .then(function (response) {
+      return response.json();
     })
-    .then(function(response) {
-        // console.log(response.data.images.original.url);
-        gifImageContainer.src = response.data.images.original.url;
-        // return(response.data.images.original.url);
+    .then(function (response) {
+      return response;
     });
-
-}
+};
